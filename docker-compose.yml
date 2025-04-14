@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: your_uname
+      RABBITMQ_DEFAULT_PASS: your_pass 
+  api-service:
+    restart: always
+    build: ./api-service
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./api-service/.env
+    depends_on:
+      - rabbitmq
+  
+  email-service:
+    restart: always
+    build: ./email-service
+    env_file:
+      - ./email-service/.env
+    depends_on:
+      - api-service
+      - rabbitmq
